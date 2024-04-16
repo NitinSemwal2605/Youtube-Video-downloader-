@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            width: 100%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+
+        #message {
+            margin-top: 20px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>YouTube Video Downloader</h1>
+    <form id="downloadForm" action="/download" method="post">
+        <div class="form-group">
+            <label for="video_url">Enter YouTube Video URL:</label>
+            <input type="text" id="video_url" name="video_url" required>
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Download" id="downloadButton">
+            <div id="loading">Loading...</div>
+        </div>
+    </form>
+    <div id="message"></div>
+</div>
+<script>
+    document.querySelector('#downloadForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var videoUrl = document.getElementById('video_url').value;
+        var downloadButton = document.getElementById('downloadButton');
+        var loading = document.getElementById('loading');
+
+        // Show loading animation
+        loading.style.display = 'block';
+        downloadButton.disabled = true;
+
+        fetch('/download', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: 'video_url=' + encodeURIComponent(videoUrl)
+        })
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('message').innerText = data;
+                // Hide loading animation
+                loading.style.display = 'none';
+                downloadButton.disabled = false;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Hide loading animation
+                loading.style.display = 'none';
+                downloadButton.disabled = false;
+            });
+    });
+</script>
+</body>
+</html>
